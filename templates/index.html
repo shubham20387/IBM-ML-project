@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>⚙️ Predictive Maintenance AI — IBM Watsonx</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+
+<body>
+
+<!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container-fluid px-4">
+    <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+      <div class="brand-icon">
+        <i class="bi bi-cpu-fill"></i>
+      </div>
+      <div>
+        <span class="brand-title">PredictMaint</span>
+        <span class="brand-sub d-none d-sm-inline">AI — IBM Watsonx</span>
+      </div>
+    </a>
+
+    <div class="d-flex align-items-center gap-3 ms-auto">
+      <!-- Status indicator -->
+      <div class="status-pill" id="statusPill">
+        <span class="status-dot" id="statusDot"></span>
+        <span class="status-text" id="statusText">Connecting...</span>
+      </div>
+
+      <!-- Dark / Light toggle -->
+      <button class="btn btn-icon" id="themeToggle" title="Toggle theme">
+        <i class="bi bi-moon-stars-fill" id="themeIcon"></i>
+      </button>
+
+      <!-- Clear chat -->
+      <button class="btn btn-icon btn-danger-soft" id="clearBtn" title="Clear conversation">
+        <i class="bi bi-trash3"></i>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════ HERO BANNER ═══════════════════════ -->
+<section class="hero-section">
+  <div class="container-fluid px-4">
+    <div class="hero-content text-center">
+      <div class="hero-badge animate-fade-in">
+        <i class="bi bi-lightning-charge-fill me-1"></i> Powered by IBM Watsonx &amp; Granite
+      </div>
+      <h1 class="hero-title animate-slide-up">
+        Predictive Maintenance<br />
+        <span class="gradient-text">Intelligence Platform</span>
+      </h1>
+      <p class="hero-subtitle animate-slide-up delay-1">
+        AI-driven fault detection, repair guidance &amp; safety protocols for industrial machinery
+      </p>
+
+      <!-- Quick stat cards -->
+      <div class="stats-row animate-slide-up delay-2">
+        <div class="stat-card">
+          <i class="bi bi-graph-up-arrow"></i>
+          <span>92% Accuracy</span>
+        </div>
+        <div class="stat-card">
+          <i class="bi bi-clock-history"></i>
+          <span>Real-time Analysis</span>
+        </div>
+        <div class="stat-card">
+          <i class="bi bi-shield-check"></i>
+          <span>Safety First</span>
+        </div>
+        <div class="stat-card">
+          <i class="bi bi-tools"></i>
+          <span>12+ Machine Types</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ MAIN LAYOUT ═══════════════════════ -->
+<main class="main-container container-fluid px-3 px-md-4">
+  <div class="row g-3 g-lg-4">
+
+    <!-- ── LEFT PANEL: Machine Selector + Quick Actions ── -->
+    <div class="col-12 col-lg-3">
+      <div class="panel-card animate-fade-in">
+        <div class="panel-header">
+          <i class="bi bi-gear-wide-connected me-2"></i>Machine Config
+        </div>
+
+        <!-- Machine Type Selector -->
+        <div class="mb-3">
+          <label class="form-label-custom">Machine Type</label>
+          <select class="form-select form-select-custom" id="machineSelect">
+            {% for m in machines %}
+            <option value="{{ m }}">{{ m | capitalize }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Severity Level -->
+        <div class="mb-3">
+          <label class="form-label-custom">Alert Severity</label>
+          <div class="severity-grid">
+            <button class="sev-btn" data-sev="low">🟢 Low</button>
+            <button class="sev-btn active" data-sev="medium">🟡 Medium</button>
+            <button class="sev-btn" data-sev="high">🔴 High</button>
+            <button class="sev-btn" data-sev="critical">🚨 Critical</button>
+          </div>
+        </div>
+
+        <!-- Quick Prompts -->
+        <div class="mb-2">
+          <label class="form-label-custom">Quick Diagnostics</label>
+          <div class="d-flex flex-column gap-2">
+            <button class="quick-btn" data-prompt="Machine is vibrating abnormally with unusual noise. Temperature is 15°C above normal. What fault should I check for?">
+              <i class="bi bi-soundwave me-2"></i>Abnormal Vibration
+            </button>
+            <button class="quick-btn" data-prompt="Oil pressure dropped by 40% in the last hour. No visible leaks. Machine is running sluggish. Diagnose the issue.">
+              <i class="bi bi-droplet-fill me-2"></i>Oil Pressure Drop
+            </button>
+            <button class="quick-btn" data-prompt="Error code E-403 is showing on the control panel repeatedly. Motor is drawing 20% more current than rated. What does this mean?">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>Error Code E-403
+            </button>
+            <button class="quick-btn" data-prompt="Bearing temperature reached 95°C which is above the 75°C threshold. Machine vibration also increased. Provide repair steps.">
+              <i class="bi bi-thermometer-high me-2"></i>Bearing Overheating
+            </button>
+            <button class="quick-btn" data-prompt="Hydraulic pump is making a cavitation noise. Pressure fluctuates between 80-120 bar. Flow rate has dropped 30%. Diagnose.">
+              <i class="bi bi-water me-2"></i>Hydraulic Cavitation
+            </button>
+            <button class="quick-btn" data-prompt="What is the recommended preventive maintenance schedule for this machine type?">
+              <i class="bi bi-calendar-check me-2"></i>PM Schedule
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sensor Input Panel -->
+      <div class="panel-card mt-3 animate-fade-in delay-1">
+        <div class="panel-header">
+          <i class="bi bi-activity me-2"></i>Sensor Readings
+        </div>
+        <div class="sensor-grid">
+          <div class="sensor-item">
+            <span class="sensor-label">Temperature</span>
+            <input type="text" class="sensor-input" id="sensorTemp" placeholder="°C" />
+          </div>
+          <div class="sensor-item">
+            <span class="sensor-label">Vibration</span>
+            <input type="text" class="sensor-input" id="sensorVib" placeholder="mm/s" />
+          </div>
+          <div class="sensor-item">
+            <span class="sensor-label">Pressure</span>
+            <input type="text" class="sensor-input" id="sensorPressure" placeholder="bar" />
+          </div>
+          <div class="sensor-item">
+            <span class="sensor-label">Current (A)</span>
+            <input type="text" class="sensor-input" id="sensorCurrent" placeholder="Amps" />
+          </div>
+        </div>
+        <button class="btn btn-analyze w-100 mt-2" id="analyzeSensorsBtn">
+          <i class="bi bi-cpu me-2"></i>Analyze Sensor Data
+        </button>
+      </div>
+    </div>
+
+    <!-- ── CENTER: Chat Window ── -->
+    <div class="col-12 col-lg-6">
+      <div class="chat-container animate-fade-in">
+        <!-- Chat header -->
+        <div class="chat-header">
+          <div class="d-flex align-items-center gap-2">
+            <div class="ai-avatar">
+              <i class="bi bi-robot"></i>
+            </div>
+            <div>
+              <div class="chat-header-title">Maintenance AI Agent</div>
+              <div class="chat-header-sub">IBM Watsonx Granite · Expert System</div>
+            </div>
+          </div>
+          <div class="chat-header-actions">
+            <button class="btn btn-icon-sm" id="exportBtn" title="Export chat">
+              <i class="bi bi-download"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages area -->
+        <div class="messages-area" id="messagesArea">
+          <!-- Welcome message injected by JS -->
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="typing-indicator d-none" id="typingIndicator">
+          <div class="ai-avatar-sm"><i class="bi bi-robot"></i></div>
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="typing-text">Analysing...</span>
+        </div>
+
+        <!-- Input Area -->
+        <div class="chat-input-area">
+          <div class="input-row">
+            <div class="input-wrapper">
+              <textarea
+                id="messageInput"
+                class="chat-input"
+                placeholder="Describe the fault, symptoms, or sensor readings…"
+                rows="1"
+              ></textarea>
+            </div>
+            <button class="btn btn-send" id="sendBtn" title="Send">
+              <i class="bi bi-send-fill"></i>
+            </button>
+          </div>
+          <div class="input-hints">
+            <span><kbd>Enter</kbd> to send</span>
+            <span><kbd>Shift+Enter</kbd> for new line</span>
+            <span id="charCount" class="char-count">0 / 2000</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── RIGHT PANEL: Info + History ── -->
+    <div class="col-12 col-lg-3">
+      <!-- AI Capabilities -->
+      <div class="panel-card animate-fade-in">
+        <div class="panel-header">
+          <i class="bi bi-stars me-2"></i>AI Capabilities
+        </div>
+        <div class="capability-list">
+          <div class="cap-item">
+            <i class="bi bi-search-heart text-primary"></i>
+            <div>
+              <div class="cap-title">Fault Prediction</div>
+              <div class="cap-desc">Detects anomalies before failure</div>
+            </div>
+          </div>
+          <div class="cap-item">
+            <i class="bi bi-wrench-adjustable text-warning"></i>
+            <div>
+              <div class="cap-title">Repair Guidance</div>
+              <div class="cap-desc">Step-by-step fix instructions</div>
+            </div>
+          </div>
+          <div class="cap-item">
+            <i class="bi bi-shield-exclamation text-danger"></i>
+            <div>
+              <div class="cap-title">Safety Protocols</div>
+              <div class="cap-desc">LOTO &amp; PPE requirements</div>
+            </div>
+          </div>
+          <div class="cap-item">
+            <i class="bi bi-calendar2-week text-success"></i>
+            <div>
+              <div class="cap-title">PM Scheduling</div>
+              <div class="cap-desc">Preventive maintenance plans</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session Stats -->
+      <div class="panel-card mt-3 animate-fade-in delay-1">
+        <div class="panel-header">
+          <i class="bi bi-bar-chart-line me-2"></i>Session Stats
+        </div>
+        <div class="stats-list">
+          <div class="stat-row">
+            <span>Messages</span>
+            <span class="stat-val" id="statMessages">0</span>
+          </div>
+          <div class="stat-row">
+            <span>Diagnoses</span>
+            <span class="stat-val" id="statDiagnoses">0</span>
+          </div>
+          <div class="stat-row">
+            <span>Active Machine</span>
+            <span class="stat-val" id="statMachine">—</span>
+          </div>
+          <div class="stat-row">
+            <span>Session Start</span>
+            <span class="stat-val" id="statStart">—</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Alerts -->
+      <div class="panel-card mt-3 animate-fade-in delay-2">
+        <div class="panel-header">
+          <i class="bi bi-bell-fill me-2"></i>Recent Alerts
+        </div>
+        <div id="alertsList" class="alerts-list">
+          <div class="no-alerts">No alerts this session</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="app-footer">
+  <div class="container-fluid px-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+      <span>© 2024 PredictMaint AI · IBM Watsonx Granite</span>
+      <span class="text-muted">Always apply LOTO before servicing machinery</span>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- marked.js for markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked@9.1.6/marked.min.js"></script>
+<!-- Custom JS -->
+<script src="/static/js/app.js"></script>
+</body>
+</html>
